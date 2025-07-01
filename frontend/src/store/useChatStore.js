@@ -105,19 +105,20 @@ export const useChatStore = create((set, get) => ({
 
   getMessages: async (userId) => {
     if (!userId || typeof userId !== "string") {
-      console.warn("❌ getMessages called with invalid userId:", userId);
-      toast.error("Cannot load messages — no user selected.");
+      console.warn("❌ getMessages: invalid userId", userId);
+      toast.error("Invalid user selected.");
       return;
     }
 
+    console.log("✅ Calling GET /messages/", userId);
+
     set({ isMessagesLoading: true });
     try {
-      console.log("📩 Fetching messages for:", userId);
       const res = await axiosInstance.get(`/messages/${userId}`);
       set({ messages: res.data });
     } catch (error) {
-      console.error("❌ Error in getMessages:", error);
-      toast.error(error?.response?.data?.message || "Failed to load messages.");
+      console.error("❌ Error in getMessages():", error);
+      toast.error(error?.response?.data?.message || "Failed to get messages.");
     } finally {
       set({ isMessagesLoading: false });
     }
