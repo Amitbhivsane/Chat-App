@@ -1,5 +1,4 @@
-import React from "react";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -9,8 +8,8 @@ import { Users } from "lucide-react";
 const Sidebar = () => {
   const { getUsers, users, selectedUser, setSelectedUser, isUsersLoading } =
     useChatStore();
-
   const { onlineUsers } = useAuthStore();
+
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
   useEffect(() => {
@@ -22,15 +21,21 @@ const Sidebar = () => {
     : users;
 
   if (isUsersLoading) return <SidebarSkeleton />;
+
   return (
-    <aside className="h-full w-20 lg:w-72 border-r border-base-300 flex flex-col transition-all duration-200">
-      <div className="border-b border-base-300 w-full p-5">
+    <aside
+      className="h-full w-20 lg:w-72 border-r border-base-300 
+      flex flex-col transition-all duration-200"
+    >
+      {/* Header */}
+      <div className="border-b border-base-300 w-full p-3 lg:p-5">
         <div className="flex items-center gap-2">
-          <Users className="size-6" />
+          <Users className="size-5 lg:size-6" />
           <span className="font-medium hidden lg:block">Contacts</span>
         </div>
-        {/* TODO: Online filter toggle */}
-        <div className="mt-3 hidden lg:flex items-center gap-2">
+
+        {/* Online Filter Toggle (only on large screens) */}
+        <div className="mt-2 hidden lg:flex items-center gap-2">
           <label className="cursor-pointer flex items-center gap-2">
             <input
               type="checkbox"
@@ -46,13 +51,14 @@ const Sidebar = () => {
         </div>
       </div>
 
-      <div className="overflow-y-auto w-full py-3">
+      {/* User List */}
+      <div className="overflow-y-auto w-full py-2 lg:py-3">
         {filteredUsers.map((user) => (
           <button
             key={user._id}
             onClick={() => setSelectedUser(user)}
             className={`
-              w-full p-3 flex items-center gap-3
+              w-full p-2 lg:p-3 flex items-center gap-2 lg:gap-3
               hover:bg-base-300 transition-colors
               ${
                 selectedUser?._id === user._id
@@ -61,21 +67,22 @@ const Sidebar = () => {
               }
             `}
           >
+            {/* Avatar */}
             <div className="relative mx-auto lg:mx-0">
               <img
                 src={user.profilePic || "/avatar.png"}
                 alt={user.name}
-                className="size-12 object-cover rounded-full"
+                className="size-10 lg:size-12 object-cover rounded-full"
               />
               {onlineUsers.includes(user._id) && (
                 <span
-                  className="absolute bottom-0 right-0 size-3 bg-green-500 
+                  className="absolute bottom-0 right-0 size-2.5 lg:size-3 bg-green-500 
                   rounded-full ring-2 ring-zinc-900"
                 />
               )}
             </div>
 
-            {/* User info - only visible on larger screens */}
+            {/* User Info - Hidden on mobile */}
             <div className="hidden lg:block text-left min-w-0">
               <div className="font-medium truncate">{user.fullname}</div>
               <div className="text-sm text-zinc-400">
@@ -85,8 +92,11 @@ const Sidebar = () => {
           </button>
         ))}
 
+        {/* No Users Message */}
         {filteredUsers.length === 0 && (
-          <div className="text-center text-zinc-500 py-4">No online users</div>
+          <div className="text-center text-sm text-zinc-500 py-4">
+            No users found
+          </div>
         )}
       </div>
     </aside>
